@@ -73,11 +73,11 @@ const CreatFormsSchema = new Schema({
   tabName: String,
   showImageField: Boolean,
   imagePath: String,
-  BussinessCard: [{
+  BussinessCard: {
+    OptionList: [OptionSchema],
     title: String,
     switchcheck: Boolean,
-    OptionList: [OptionSchema] 
-  }],
+  },
   DetailRecord:[ItemSchema]
 })
 
