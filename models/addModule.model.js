@@ -50,12 +50,35 @@ const MainLayoutSchema = new Schema({
   y: Number
 });
 
+const OptionSchema = new Schema({
+  id: Number,
+  name: String,
+  checked: Boolean,
+  name2: String
+});
+
+const ItemSchema = new mongoose.Schema({
+  id: String,
+  content: {
+    type: mongoose.Schema.Types.Mixed 
+  },
+  droppable: Boolean,
+  show: Boolean,
+  switchshow: Boolean
+});
+
 const CreatFormsSchema = new Schema({
   sectionLayouts: [MainLayoutSchema],
   organizationId: String,
   tabName: String,
   showImageField: Boolean,
-  imagePath: String
+  imagePath: String,
+  BussinessCard: [{
+    title: String,
+    switchcheck: Boolean,
+    OptionList: [OptionSchema] 
+  }],
+  DetailRecord:[ItemSchema]
 })
 
 const MainLayoutModel = mongoose.model('CreateLayoutForms', CreatFormsSchema);
