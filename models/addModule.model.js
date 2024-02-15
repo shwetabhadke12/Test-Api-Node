@@ -27,24 +27,7 @@ const { Schema } = mongoose;
 //   SectionLayout: Number
 // });
 
- 
-const OptionSchema = new Schema({
-  id: Number,
-  name: String,
-  checked: Boolean,
-  name2: String
-});
- 
-const ItemSchema = new mongoose.Schema({
-  id: String,
-  content: {
-    type: mongoose.Schema.Types.Mixed
-  },
-  droppable: Boolean,
-  show: Boolean,
-  switchshow: Boolean
-});
- 
+
 const LayoutItemSchema = new mongoose.Schema({
   w: Number,
   h: Number,
@@ -85,24 +68,25 @@ const MainLayoutSchema = new mongoose.Schema({
   y: Number
 });
 
-const MainSchema = new mongoose.Schema({
-  w: Number,
-  h: Number,
-  x: Number,
-  y: Number,
-  i: String,
-  moved: Boolean,
-  static: Boolean,
-  layoutSetting: {
-    SectionLayout: Number 
-  },
-  layout: [LayoutItemSchema], 
-  sectionName: String
+const OptionSchema = new Schema({
+  id: Number,
+  name: String,
+  checked: Boolean,
+  name2: String
 });
 
-const CreatFormsSchema = new mongoose.Schema({
-  sectionLayouts: [MainSchema],
-  quickLayouts: [MainLayoutSchema],
+const ItemSchema = new mongoose.Schema({
+  id: String,
+  content: {
+    type: mongoose.Schema.Types.Mixed 
+  },
+  droppable: Boolean,
+  show: Boolean,
+  switchshow: Boolean
+});
+
+const CreatFormsSchema = new Schema({
+  sectionLayouts: [MainLayoutSchema],
   organizationId: String,
   tabName: String,
   showImageField: Boolean,
