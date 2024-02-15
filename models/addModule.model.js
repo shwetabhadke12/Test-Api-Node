@@ -22,7 +22,7 @@ const { Schema } = mongoose;
 //   x: Number,
 //   y: Number
 // });
- 
+
 // const LayoutSettingSchema = new Schema({
 //   SectionLayout: Number
 // });
@@ -39,7 +39,7 @@ const LayoutItemSchema = new mongoose.Schema({
   isDraggable: { type: Boolean, default: true }, // If not provided, default value is true
   label: String,
   type: String,
-  isRequired:Boolean,
+  isRequired: Boolean,
   name: String,
   layoutSetting: {
     type: mongoose.Schema.Types.Mixed, // Store layout settings as a flexible mixed type
@@ -78,7 +78,7 @@ const OptionSchema = new Schema({
 const ItemSchema = new mongoose.Schema({
   id: String,
   content: {
-    type: mongoose.Schema.Types.Mixed 
+    type: mongoose.Schema.Types.Mixed
   },
   droppable: Boolean,
   show: Boolean,
@@ -87,6 +87,7 @@ const ItemSchema = new mongoose.Schema({
 
 const CreatFormsSchema = new Schema({
   sectionLayouts: [MainLayoutSchema],
+  quickLayouts : [MainLayoutSchema],
   organizationId: String,
   tabName: String,
   showImageField: Boolean,
@@ -97,7 +98,7 @@ const CreatFormsSchema = new Schema({
     title: String,
     switchcheck: Boolean,
   },
-  DetailRecord:[ItemSchema]
+  DetailRecord: [ItemSchema]
 }, {
   versionKey: false,
   timestamps: true
