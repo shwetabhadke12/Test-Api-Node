@@ -1,17 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const FormDataModel = require('../models/formFeilds.model');
- 
+
+// CREATE: POST route to create a new dynamic data document
 // CREATE: POST route to create a new dynamic data document
 router.post('/', async (req, res) => {
     try {
-        const { organizationId, moduleId, image, ...formFields } = req.body;
- 
+        const { organizationId, moduleId, image, sections } = req.body;
+
         const newData = {
             organizationId,
             moduleId,
             image,
-            formFields // Assign the formFields to formFields
+            sections
         };
  
         const result = await FormDataModel.create(newData);
@@ -21,7 +22,8 @@ router.post('/', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
- 
+
+
 // READ: GET route to get all dynamic data documents
 router.get('/', async (req, res) => {
     try {
@@ -43,7 +45,7 @@ router.get('/module/:moduleId', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
- 
+
 // READ: GET route to get a dynamic data document by ID
 router.get('/:id', async (req, res) => {
     try {

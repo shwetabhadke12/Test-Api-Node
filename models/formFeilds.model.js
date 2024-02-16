@@ -8,16 +8,23 @@ const FormDataSchema = new mongoose.Schema({
     moduleId: {
         type: String,
         required: true,
-        ref :'CreatFormsSchema'
+        ref: 'CreatFormsSchema'
     },
     image: {
         type: String,
-        // required: true
     },
-    formFields: {
-        type: Map,
-        of: String
-    }
+    sections: [
+        {
+            sectionName: {
+                type: String,
+                required: true
+            },
+            fields: {
+                type: Map,
+                of: String
+            }
+        }
+    ]
 }, {
     versionKey: false,
     timestamps: true
