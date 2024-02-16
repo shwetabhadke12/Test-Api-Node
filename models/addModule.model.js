@@ -87,6 +87,7 @@ const ItemSchema = new mongoose.Schema({
 
 const CreatFormsSchema = new Schema({
   sectionLayouts: [MainLayoutSchema],
+  quickLayouts:[MainLayoutSchema],
   organizationId: String,
   tabName: String,
   showImageField: Boolean,
