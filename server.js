@@ -3,6 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const mainLayoutRoutes = require('./routes/addModule.route');
 const formLayoutRoutes = require('./routes/formFeilds.routes');
+const singlerouter = require('./routes/NotesModule.route')
+const path = require('path');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -10,6 +12,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(express.urlencoded({extended:false}));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const allowedOrigins = ['http://localhost:8889']; 
 app.use(cors({
   origin: function (origin, callback) {
@@ -20,9 +24,10 @@ app.use(cors({
     }
   }
 }));
-
+app.get('/favicon.ico', (req, res) => res.status(204));
 app.use('/', mainLayoutRoutes);
 app.use('/forms', formLayoutRoutes);
+app.use('/single',singlerouter)
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
