@@ -6,6 +6,7 @@ const path = require('path');
 const AttachmentSchema = require('../models/attachments.model');
 const mongoose = require('mongoose');
 const PhotoUploding = require('../models/photo');
+const Update = require('../models/timeline.module')
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -352,6 +353,49 @@ router.put('/editurlone/:id', upload.none(), async (req, res) => {
   }
 });
 
+router.post('/update-data/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(req.params);
+    const [{ text, date }] = req.body; 
+console.log(req.body);
+  
+    const existingDocument = await Update.findOne({ id: id });
+
+    if (existingDocument) {
+  
+      existingDocument.updates.push({ text, date });
+      await existingDocument.save();
+    } else {
+     
+      const newDocument = new Update({
+        id: id, 
+        updates: [{ text, date }]
+      });
+      await newDocument.save();
+    }
+
+    res.status(200).json({ message: 'Update saved successfully' });
+  } catch (error) {
+    console.error('Error saving update:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+router.get('/gettimline/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(req.params);
+  
+    const existingDocument = await Update.findOne({ id: id });
+
+    res.status(200).json({ existingDocument });
+  } catch (error) {
+    console.error('Error saving update:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 module.exports = router;
