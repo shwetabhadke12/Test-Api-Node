@@ -201,7 +201,7 @@ router.delete('/deleteFiles/:id', async (req, res) => {
     const { id } = req.params;
     
     const result = await AttachmentSchema.findByIdAndDelete({ _id: id ,tab:"attachment"});
-    res.status(201).json('hhbhbhb');
+    res.status(201).json({result:result});
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -405,8 +405,10 @@ router.get('/gettimline/:id', async (req, res) => {
   try {
     const { id } = req.params;
     console.log(req.params);
-  
-    const existingDocument = await Update.findOne({ id: id });
+  const today = new Date();
+  const fordays = new Date(today);
+   fordays.setDate(today.getDate()-4)
+    const existingDocument = await Update.findOne({ id: id,"updates.date":{$gte:fordays.toISOString(),$lte:today.toISOString()}  });
 
     res.status(200).json({ existingDocument });
   } catch (error) {
