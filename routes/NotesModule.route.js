@@ -5,8 +5,9 @@ const multer = require('multer');
 const path = require('path');
 const AttachmentSchema = require('../models/attachments.model');
 const mongoose = require('mongoose');
-const PhotoUploding = require('../models/photo');
-const Update = require('../models/timeline.module')
+
+const Update = require('../models/timeline.module');
+const ImageModel = require('../models/photo');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -73,7 +74,7 @@ router.post('/cropimage', upload.none(), async (req, res) => {
     const { id, image } = req.body;
  
 
-    const newData = new PhotoUploding({
+    const newData = new ImageModel({
       id,
       image 
     });
@@ -173,7 +174,7 @@ router.delete('/deletephoto/:photoid', async (req, res) => {
   try {
     const { photoid } = req.params;
     const id = Number(photoid);
-    const result = await PhotoUploding.deleteOne({ id: id });
+    const result = await ImageModel.deleteOne({ id: id });
     res.status(201).json(result);
   } catch (error) {
     console.error(error);
@@ -306,7 +307,7 @@ router.put('/updateNote/:id', upload.array('files'), async (req, res) => {
       return res.status(404).json({ error: 'Note not found' });
     }
 
-    res.status(200).json('asjbdjsabd');
+    res.status(200).json({result:result});
    
   } catch (error) {
     console.error(error);
@@ -357,20 +358,22 @@ router.post('/update-data/:id', async (req, res) => {
   try {
     const { id } = req.params;
     console.log(req.params);
-    const [{ text, date }] = req.body; 
+    const [{ text, date, tab,action }] = req.body; 
 console.log(req.body);
   
     const existingDocument = await Update.findOne({ id: id });
 
     if (existingDocument) {
   
-      existingDocument.updates.push({ text, date });
+      existingDocument.updates.push({ tab,action,text, date });
       await existingDocument.save();
     } else {
      
       const newDocument = new Update({
+       
         id: id, 
-        updates: [{ text, date }]
+        updates: [{ tab,action,text, date }]
+        
       });
       await newDocument.save();
     }
@@ -380,7 +383,22 @@ console.log(req.body);
     console.error('Error saving update:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
+
 });
+
+router.get('/getimage/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(id);
+    const result = await ImageModel.findOne({ id: id });
+    res.status(200).json({ result });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
 
 
 router.get('/gettimline/:id', async (req, res) => {

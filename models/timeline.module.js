@@ -2,6 +2,14 @@ const mongoose = require('mongoose');
 
 // Define the schema for each update
 const updateSchema = new mongoose.Schema({
+  tab:{
+    type:String,
+    required:true
+  },
+  action:{
+    type:String,
+    required:true
+  },
   text: {
     type: String,
     required: true
