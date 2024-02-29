@@ -37,6 +37,7 @@ router.get('/', async (req, res) => {
 
 router.get('/module/:moduleId', async (req, res) => {
     const { moduleId } = req.params;
+    console.log(req.params);
     try {
         const data = await FormDataModel.find({ moduleId: moduleId }).populate('moduleId');
         res.status(200).json(data);
