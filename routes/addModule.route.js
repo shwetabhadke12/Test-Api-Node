@@ -37,7 +37,6 @@ router.post('/upload', (req, res) => {
 
 // Create a new document
 router.post('/', async (req, res) => {
-  console.log(req.body, 'hitted');
   try {
     const newDocument = await MainLayoutModel.create(req.body);
     res.status(201).json(newDocument);
@@ -49,7 +48,8 @@ router.post('/', async (req, res) => {
 // Get all documents
 router.get('/', async (req, res) => {
   try {
-    const documents = await MainLayoutModel.find();
+    console.log('came')
+    const documents = await MainLayoutModel.find({approved:true});
     res.json(documents);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -74,6 +74,25 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const updatedDocument = await MainLayoutModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (updatedDocument) {
+      res.json(updatedDocument);
+    } else {
+      res.status(404).json({ message: 'Document not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Update specific fields of a document by ID
+router.patch('/:id', async (req, res) => {
+  console.log(req.params, 'parararararr')
+  try {
+    const updatedDocument = await MainLayoutModel.findByIdAndUpdate(
+      req.params.id,
+      req.body, // Only the fields to be updated are passed directly
+      { new: true }
+    );
     if (updatedDocument) {
       res.json(updatedDocument);
     } else {
