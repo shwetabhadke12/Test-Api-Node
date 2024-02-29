@@ -98,7 +98,8 @@ const CreatFormsSchema = new Schema({
     title: String,
     switchcheck: Boolean,
   },
-  DetailRecord: [ItemSchema]
+  DetailRecord: [ItemSchema],
+  approved:Boolean
 }, {
   versionKey: false,
   timestamps: true
