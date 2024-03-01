@@ -52,7 +52,7 @@ router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const data = await FormDataModel.findById(id);
-        console.log(data,'adatatattat---------------')
+        // console.log(data,'adatatattat---------------')
         if (!data) {
             return res.status(404).json({ error: 'Data not found' });
         }
@@ -66,21 +66,28 @@ router.get('/:id', async (req, res) => {
 // UPDATE: PUT route to update a dynamic data document by ID
 router.put('/:id', async (req, res) => {
     try {
-        const { id } = req.params;
+      
+        console.log(id);
         const { organizationId, moduleId, image, ...formFields } = req.body;
+        
 
-        const newData = {
-            organizationId,
-            moduleId,
-            image,
-            formFields // Assign the formFields to formFields
-        };
+        const existingdocument = await FormDataModel.findOne({_id:id});
+        if (!existingdocument) {
+            res.status(400).json({msg:'document not found'})
+        }
+
+        const newData ={
+           organizationId,
+           moduleId,
+           image,
+           ...formFields
+        }
 
         const updatedData = await FormDataModel.findByIdAndUpdate(id, newData, { new: true });
         if (!updatedData) {
             return res.status(404).json({ error: 'Data not found' });
         }
-        res.status(200).json(updatedData);
+        res.status(200).json('updated');
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -101,5 +108,43 @@ router.delete('/:id', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
+
+
+router.patch('/infodata/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        // console.log(req.body);
+
+
+        const sum = await FormDataModel.findOne({_id:id});
+        if (!sum) {
+            res.status(400).json({msg:"document not found"});
+        }
+        const newdata = {
+            'sections.0.fields.Email':req.body.Email,
+            'sections.0.fields.Secondary Email':req.body.SecondEmail,
+            'sections.0.fields.Untitled Name':req.body.name,
+            'sections.0.fields.Untitled Owner':req.body.owner,
+
+        }
+        const updatedDocument = await FormDataModel.findOneAndUpdate(
+            { _id: id, 'sections._id': sum.sections[0]._id }, 
+            { $set: newdata }, 
+            { new: true }
+        );
+       
+      
+        res.status(200).json(updatedDocument);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+      
+      
+  });
+  
+  
+
 
 module.exports = router;

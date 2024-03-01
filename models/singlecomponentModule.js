@@ -16,7 +16,7 @@ const FileSchema = new mongoose.Schema({
 
 const FormDataSchema = new mongoose.Schema({
     id: {
-        type: Number
+        type: String
     },
     tab:{
         type:String

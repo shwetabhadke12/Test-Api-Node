@@ -73,7 +73,7 @@ router.post('/cropimage', upload.none(), async (req, res) => {
   try {
     const { id, image } = req.body;
  
-
+console.log(id,image) 
     const newData = new ImageModel({
       id,
       image 
@@ -81,7 +81,7 @@ router.post('/cropimage', upload.none(), async (req, res) => {
 
     await newData.save();
 
-    res.status(201).json({ id,image });
+    res.status(201).json({ id1:id,image });
   } catch (error) {
     console.error('Error saving image:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -173,7 +173,7 @@ router.delete('/deleteNote/:id', async (req, res) => {
 router.delete('/deletephoto/:photoid', async (req, res) => {
   try {
     const { photoid } = req.params;
-    const id = Number(photoid);
+    const id = photoid;
     const result = await ImageModel.deleteOne({ id: id });
     res.status(201).json(result);
   } catch (error) {
@@ -397,9 +397,6 @@ router.get('/getimage/:id', async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-
-
 
 router.get('/gettimline/:id', async (req, res) => {
   try {
