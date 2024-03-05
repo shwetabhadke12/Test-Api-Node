@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+ 
 const FormDataSchema = new mongoose.Schema({
     organizationId: {
         type: String,
@@ -29,7 +29,7 @@ const FormDataSchema = new mongoose.Schema({
     versionKey: false,
     timestamps: true
 });
-
+ 
 const FormDataModel = mongoose.model('FormData', FormDataSchema);
-
+ 
 module.exports = FormDataModel;
