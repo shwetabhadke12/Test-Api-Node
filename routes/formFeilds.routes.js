@@ -23,7 +23,23 @@ router.post('/', async (req, res) => {
     }
 });
 
-
+router.patch('/:id', async (req, res) => {
+    try {
+      const updatedDocument = await FormDataModel.findByIdAndUpdate(
+        req.params.id,
+        req.body, // Only the fields to be updated are passed directly
+        { new: true }
+      );
+      if (updatedDocument) {
+        res.json(updatedDocument);
+      } else {
+        res.status(404).json({ message: 'Document not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+  
 // READ: GET route to get all dynamic data documents
 router.get('/', async (req, res) => {
     try {
