@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const mainLayoutRoutes = require('./routes/addModule.route');
 const formLayoutRoutes = require('./routes/formFeilds.routes');
+const activityRoutes = require('./routes/activity.route');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -23,6 +24,7 @@ app.use(cors({
 
 app.use('/', mainLayoutRoutes);
 app.use('/forms', formLayoutRoutes);
+app.use('/activity', activityRoutes);
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
