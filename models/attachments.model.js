@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const FormDataSchema = new mongoose.Schema({
     id: {
-        type: Number
+        type:String
     },
     tab: {
         type: String

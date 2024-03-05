@@ -5,9 +5,10 @@ const multer = require('multer');
 const path = require('path');
 const AttachmentSchema = require('../models/attachments.model');
 const mongoose = require('mongoose');
-
+const Tagsmodel = require('../models/tags.module')
 const Update = require('../models/timeline.module');
 const ImageModel = require('../models/photo');
+
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -73,7 +74,7 @@ router.post('/cropimage', upload.none(), async (req, res) => {
   try {
     const { id, image } = req.body;
  
-
+console.log(id,image) 
     const newData = new ImageModel({
       id,
       image 
@@ -81,7 +82,7 @@ router.post('/cropimage', upload.none(), async (req, res) => {
 
     await newData.save();
 
-    res.status(201).json({ id,image });
+    res.status(201).json({ id1:id,image });
   } catch (error) {
     console.error('Error saving image:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -157,11 +158,11 @@ router.get('/fetchdataid/:id',upload.none(),async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-router.delete('/deleteNote/:id', async (req, res) => {
+router.delete('/deleteNote/:id1', async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id1 } = req.params;
   
-    const result = await SingleCompoent.findByIdAndDelete({ _id: id ,tab:"notes"});
+    const result = await SingleCompoent.findByIdAndDelete({ _id: id1 ,tab:"notes"});
     res.status(201).json(result);
   } catch (error) {
     console.error(error);
@@ -173,7 +174,7 @@ router.delete('/deleteNote/:id', async (req, res) => {
 router.delete('/deletephoto/:photoid', async (req, res) => {
   try {
     const { photoid } = req.params;
-    const id = Number(photoid);
+    const id = photoid;
     const result = await ImageModel.deleteOne({ id: id });
     res.status(201).json(result);
   } catch (error) {
@@ -196,12 +197,12 @@ router.get('/download/:filename', (req, res) => {
 
 
 
-router.delete('/deleteFiles/:id', async (req, res) => {
+router.delete('/deleteFiles/:id1', async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id1 } = req.params;
     
-    const result = await AttachmentSchema.findByIdAndDelete({ _id: id ,tab:"attachment"});
-    res.status(201).json('hhbhbhb');
+    const result = await AttachmentSchema.findByIdAndDelete({ _id: id1 ,tab:"attachment"});
+    res.status(201).json({result:result});
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -315,15 +316,15 @@ router.put('/updateNote/:id', upload.array('files'), async (req, res) => {
   }
 });
 
-router.put('/editurlone/:id', upload.none(), async (req, res) => {
+router.put('/editurlone/:id1', upload.none(), async (req, res) => {
   try {
-    const { id } = req.params; // Moved declaration of id here
+    const { id1 } = req.params; // Moved declaration of id here
     const { url, name } = req.body;
   
     const url1 = JSON.parse(url);
   
 
-    const existingDocument = await AttachmentSchema.findById(id);
+    const existingDocument = await AttachmentSchema.findById(id1);
 
     if (!existingDocument) {
       return res.status(404).json({ error: "Document not found" });
@@ -337,7 +338,7 @@ router.put('/editurlone/:id', upload.none(), async (req, res) => {
    }
 
     const result = await AttachmentSchema.findByIdAndUpdate(
-      id,
+      id1,
       updatedDocument,
       { new: true }
     );
@@ -364,14 +365,13 @@ console.log(req.body);
     const existingDocument = await Update.findOne({ id: id });
 
     if (existingDocument) {
-  
       existingDocument.updates.push({ tab,action,text, date });
       await existingDocument.save();
     } else {
      
       const newDocument = new Update({
        
-        id: id, 
+        id:id, 
         updates: [{ tab,action,text, date }]
         
       });
@@ -398,20 +398,82 @@ router.get('/getimage/:id', async (req, res) => {
   }
 });
 
-
-
-
 router.get('/gettimline/:id', async (req, res) => {
   try {
     const { id } = req.params;
     console.log(req.params);
-  
-    const existingDocument = await Update.findOne({ id: id });
+  const today = new Date();
+  const fordays = new Date(today);
+   fordays.setDate(today.getDate()-4)
+    const existingDocument = await Update.findOne({ id: id,"updates.date":{$gte:fordays.toISOString(),$lte:today.toISOString()}  });
 
     res.status(200).json({ existingDocument });
   } catch (error) {
     console.error('Error saving update:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.post('/insetTages/:id', upload.none(), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { tags, selected } = req.body;
+
+    const tagColorPairs = tags.map(tagColor => {
+      const [tag, color] = tagColor.split(':');
+      return { tag, color };
+    });
+   
+
+    const pum = selected.split(',');
+    const existingDocument = await Tagsmodel.findOne({ id });
+   
+    if (existingDocument) {
+      const tagsToDelete = existingDocument.tags.filter(tag => !pum.includes(tag.tag));
+      console.log(tagsToDelete);
+      
+      if (tagsToDelete.length > 0) {
+        const tagIdsToDelete = tagsToDelete.map(tag => tag._id);
+        console.log(tagIdsToDelete);
+       
+        const sum = await Tagsmodel.findOneAndUpdate(
+          { id },
+          { $pull: { tags: { _id: { $in: tagIdsToDelete } } } }
+        );
+       
+      } 
+      const existingTags = existingDocument.tags.map(item => item.tag);
+        const newTags = tagColorPairs.filter(item => !existingTags.includes(item.tag) && pum.includes(item.tag));
+        const tagsToDelete1 = existingDocument.tags.filter(tag => !pum.includes(tag.tag));
+        const sum = tagsToDelete1.length > 0 ? tagsToDelete1.map(tag => tag.tag) : "";
+        
+      
+        const updatedDocument = await Tagsmodel.findOneAndUpdate(
+          { id },
+          { $push: { tags: { $each: newTags } } },
+          { new: true }
+        );
+        res.status(200).json({updatedDocument,sum});
+    } else {
+      const newDocument = new Tagsmodel({ id, tags: tagColorPairs });
+      const savedDocument = await newDocument.save();
+      res.status(200).json(savedDocument);
+    }
+  } catch (error) {
+    console.error('Error saving update:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+router.get('/getTags/:id',upload.none(), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await Tagsmodel.findOne({ id:id});
+    res.status(201).json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 

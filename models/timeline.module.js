@@ -23,7 +23,7 @@ const updateSchema = new mongoose.Schema({
 // Define the schema for the document containing an array of updates
 const documentSchema = new mongoose.Schema({
   id:{
-    type:Number
+    type:String
   },
   updates: [updateSchema] // Define updates as an array of updateSchema
 });
