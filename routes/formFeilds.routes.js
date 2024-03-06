@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
             image,
             sections
         };
-
+ 
         const result = await FormDataModel.create(newData);
         res.status(201).json(result);
     } catch (error) {
@@ -24,7 +24,23 @@ router.post('/', async (req, res) => {
     }
 });
 
-
+router.patch('/:id', async (req, res) => {
+    try {
+      const updatedDocument = await FormDataModel.findByIdAndUpdate(
+        req.params.id,
+        req.body, // Only the fields to be updated are passed directly
+        { new: true }
+      );
+      if (updatedDocument) {
+        res.json(updatedDocument);
+      } else {
+        res.status(404).json({ message: 'Document not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+  
 // READ: GET route to get all dynamic data documents
 router.get('/', async (req, res) => {
     try {
@@ -35,7 +51,7 @@ router.get('/', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
+ 
 router.get('/module/:moduleId', async (req, res) => {
     const { moduleId } = req.params;
     // console.log(req.params);
@@ -63,12 +79,14 @@ router.get('/:id', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
+ 
 // UPDATE: PUT route to update a dynamic data document by ID
 router.put('/:id', async (req, res) => {
     try {
       
-        // console.log(id);
+
+        const { id } = req.params;
+
         const { organizationId, moduleId, image, ...formFields } = req.body;
         
 
@@ -94,7 +112,7 @@ router.put('/:id', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
+ 
 // DELETE: DELETE route to delete a dynamic data document by ID
 router.delete('/:id', async (req, res) => {
     try {

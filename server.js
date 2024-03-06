@@ -5,6 +5,7 @@ const mainLayoutRoutes = require('./routes/addModule.route');
 const formLayoutRoutes = require('./routes/formFeilds.routes');
 const singlerouter = require('./routes/NotesModule.route')
 const path = require('path');
+const activityRoutes = require('./routes/activity.route');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -27,6 +28,7 @@ app.get('/favicon.ico', (req, res) => res.status(204));
 app.use('/', mainLayoutRoutes);
 app.use('/forms', formLayoutRoutes);
 app.use('/single',singlerouter)
+app.use('/activity', activityRoutes);
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {

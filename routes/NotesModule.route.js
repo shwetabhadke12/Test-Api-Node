@@ -7,7 +7,7 @@ const AttachmentSchema = require('../models/attachments.model');
 const mongoose = require('mongoose');
 const Tagsmodel = require('../models/tags.module')
 const Update = require('../models/timeline.module');
-const ImageModel = require('../models/photo');
+
 
 
 const storage = multer.diskStorage({
@@ -24,9 +24,6 @@ router.post('/attachmnetpost', upload.single('attachmentfiles'), async (req, res
   try {
    
     const { id, tab } = req.body;
-
-   
-
     const newData = new AttachmentSchema({
       id,
       tab,
@@ -70,24 +67,6 @@ router.post('/urlpostreq',upload.none(), async (req, res) => {
   }
 });
 
-router.post('/cropimage', upload.none(), async (req, res) => {
-  try {
-    const { id, image } = req.body;
- 
-console.log(id,image) 
-    const newData = new ImageModel({
-      id,
-      image 
-    });
-
-    await newData.save();
-
-    res.status(201).json({ id1:id,image });
-  } catch (error) {
-    console.error('Error saving image:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
 
 
 
@@ -391,17 +370,8 @@ console.log(req.body);
 
 });
 
-router.get('/getimage/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    console.log(id);
-    const result = await ImageModel.findOne({ id: id });
-    res.status(200).json({ result });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
+
+
 
 router.get('/gettimline/:id', async (req, res) => {
   try {
