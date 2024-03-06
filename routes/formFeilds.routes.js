@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const FormDataModel = require('../models/formFeilds.model');
 
+
 // CREATE: POST route to create a new dynamic data document
 // CREATE: POST route to create a new dynamic data document
 router.post('/', async (req, res) => {
@@ -37,7 +38,7 @@ router.get('/', async (req, res) => {
 
 router.get('/module/:moduleId', async (req, res) => {
     const { moduleId } = req.params;
-    console.log(req.params);
+    // console.log(req.params);
     try {
         const data = await FormDataModel.find({ moduleId: moduleId }).populate('moduleId');
         res.status(200).json(data);
@@ -67,7 +68,7 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
       
-        console.log(id);
+        // console.log(id);
         const { organizationId, moduleId, image, ...formFields } = req.body;
         
 
@@ -109,7 +110,32 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+router.post('/deletephoto/:photoid', async (req, res) => {
+    try {
+      const { photoid } = req.params;
+    //   console.log(photoid);
 
+      const result = await FormDataModel.findByIdAndUpdate({_id:photoid},{image:""});
+      res.status(201).json(result);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+  router.post('/addphoto/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      console.log(req.body);
+        
+
+      const result = await FormDataModel.findByIdAndUpdate({_id:id},{image: req.body.data }, { new: true });
+      res.status(201).json('ssssssssss');
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
 
 router.patch('/infodata/:id', async (req, res) => {
     try {

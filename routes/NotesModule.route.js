@@ -170,18 +170,23 @@ router.delete('/deleteNote/:id1', async (req, res) => {
   }
 });
 
-
-router.delete('/deletephoto/:photoid', async (req, res) => {
+router.delete('/deleteCompleteNotes/:id',upload.none(), async (req, res) => {
   try {
-    const { photoid } = req.params;
-    const id = photoid;
-    const result = await ImageModel.deleteOne({ id: id });
-    res.status(201).json(result);
+    const { id } = req.params;
+  
+     await SingleCompoent.deleteMany({id:id});
+      await AttachmentSchema.deleteMany({ id:id});
+      await Tagsmodel.findOneAndDelete({id:id});
+      await Update.findOneAndDelete({id:id})
+    res.status(201).json('deleted');
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+
 
 
 router.get('/download/:filename', (req, res) => {
