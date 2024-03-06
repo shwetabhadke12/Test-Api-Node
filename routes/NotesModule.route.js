@@ -428,7 +428,7 @@ router.post('/insetTages/:id', upload.none(), async (req, res) => {
       const [tag, color] = tagColor.split(':');
       return { tag, color };
     });
-   
+   console.log(selected);
 
     const pum = selected.split(',');
     const existingDocument = await Tagsmodel.findOne({ id });
@@ -441,7 +441,7 @@ router.post('/insetTages/:id', upload.none(), async (req, res) => {
         const tagIdsToDelete = tagsToDelete.map(tag => tag._id);
         console.log(tagIdsToDelete);
        
-        const sum = await Tagsmodel.findOneAndUpdate(
+        const sum = await Tagsmodel.updateMany(
           { id },
           { $pull: { tags: { _id: { $in: tagIdsToDelete } } } }
         );
