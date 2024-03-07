@@ -38,10 +38,10 @@ router.get('/:id', async (req, res) => {
 });
 
 
-router.get('/tag/:tagId/:moduleId', async (req, res) => {
-    const { moduleId, tagId } = req.params;
+router.get('/tag/:tagId', async (req, res) => {
+    const { tagId } = req.params;
     try {
-        const data = await OptionsDataModel.find({ moduleId: moduleId, tagId })
+        const data = await OptionsDataModel.findOne({ tagId })
         res.status(200).json(data);
     } catch (error) {
         console.error(error);
