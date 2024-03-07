@@ -7,7 +7,7 @@ const AttachmentSchema = require('../models/attachments.model');
 const mongoose = require('mongoose');
 const Tagsmodel = require('../models/tags.module')
 const Update = require('../models/timeline.module');
-const ImageModel = require('../models/photo');
+
 
 
 const storage = multer.diskStorage({
@@ -24,9 +24,6 @@ router.post('/attachmnetpost', upload.single('attachmentfiles'), async (req, res
   try {
    
     const { id, tab } = req.body;
-
-   
-
     const newData = new AttachmentSchema({
       id,
       tab,
@@ -70,24 +67,6 @@ router.post('/urlpostreq',upload.none(), async (req, res) => {
   }
 });
 
-router.post('/cropimage', upload.none(), async (req, res) => {
-  try {
-    const { id, image } = req.body;
- 
-console.log(id,image) 
-    const newData = new ImageModel({
-      id,
-      image 
-    });
-
-    await newData.save();
-
-    res.status(201).json({ id1:id,image });
-  } catch (error) {
-    console.error('Error saving image:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
 
 
 
@@ -170,18 +149,23 @@ router.delete('/deleteNote/:id1', async (req, res) => {
   }
 });
 
-
-router.delete('/deletephoto/:photoid', async (req, res) => {
+router.delete('/deleteCompleteNotes/:id',upload.none(), async (req, res) => {
   try {
-    const { photoid } = req.params;
-    const id = photoid;
-    const result = await ImageModel.deleteOne({ id: id });
-    res.status(201).json(result);
+    const { id } = req.params;
+  
+     await SingleCompoent.deleteMany({id:id});
+      await AttachmentSchema.deleteMany({ id:id});
+      await Tagsmodel.findOneAndDelete({id:id});
+      await Update.findOneAndDelete({id:id})
+    res.status(201).json('deleted');
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+
 
 
 router.get('/download/:filename', (req, res) => {
@@ -386,17 +370,8 @@ console.log(req.body);
 
 });
 
-router.get('/getimage/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    console.log(id);
-    const result = await ImageModel.findOne({ id: id });
-    res.status(200).json({ result });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
+
+
 
 router.get('/gettimline/:id', async (req, res) => {
   try {
@@ -423,7 +398,7 @@ router.post('/insetTages/:id', upload.none(), async (req, res) => {
       const [tag, color] = tagColor.split(':');
       return { tag, color };
     });
-   
+   console.log(selected);
 
     const pum = selected.split(',');
     const existingDocument = await Tagsmodel.findOne({ id });
@@ -436,7 +411,7 @@ router.post('/insetTages/:id', upload.none(), async (req, res) => {
         const tagIdsToDelete = tagsToDelete.map(tag => tag._id);
         console.log(tagIdsToDelete);
        
-        const sum = await Tagsmodel.findOneAndUpdate(
+        const sum = await Tagsmodel.updateMany(
           { id },
           { $pull: { tags: { _id: { $in: tagIdsToDelete } } } }
         );
